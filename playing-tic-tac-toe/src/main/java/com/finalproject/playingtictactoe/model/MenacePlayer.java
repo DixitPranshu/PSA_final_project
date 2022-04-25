@@ -1,4 +1,4 @@
-package model;
+package com.finalproject.playingtictactoe.model;
 
 import java.util.*;
 
