@@ -14,7 +14,7 @@
     color: white;
     text-align: center;
     font-size: 40px;
-    margin-top: 10%;
+    margin-top: 4vw;
 }
 
 .display {
@@ -22,6 +22,15 @@
     font-size: 25px;
     text-align: center;
     margin-top: 1em;
+    margin-bottom: 1em;
+}
+
+.display-instructions {
+    color: white;
+    font-size: 25px;
+    font-style: italic;
+    text-align: center;
+    margin-top: 0.5vw;
     margin-bottom: 1em;
 }
 
@@ -47,6 +56,16 @@
     align-items: center;
     font-size: 50px;
     cursor: pointer;
+}
+
+#player_X{
+    color: white;
+    background-color: #09C372;
+}
+
+#player_O{
+    color: white;
+    background-color: #498AFB;
 }
 
 .playerX {
@@ -83,6 +102,18 @@
     background-color: #FF3860;
 }
 
+#train_menace {
+    background-color: #FF3860;
+}
+
 .start {
     background-color: #228cf9;
+}
+
+.wins {
+    margin: 5vw;
+}
+
+.count {
+    margin: 6vw;
 }

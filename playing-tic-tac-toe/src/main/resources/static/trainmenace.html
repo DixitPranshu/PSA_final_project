@@ -6,7 +6,7 @@
     <link rel="stylesheet" href="css/game.css">
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css2?family=Itim&display=swap" rel="stylesheet">
-    <script src="js/game.js"></script>
+    <script src="js/trainmenace.js"></script>
     <title>Tic-Tac-Toe</title>
 </head>
 <body>
@@ -15,18 +15,13 @@
             <h1>Tic Tac Toe</h1>
         </section>
         <section class="display-instructions">
-            Choose your Player <span class="display-instructions">(Player <span class="playerX">X</span> goes first)</span>
-        </section>
-        <section class="controls">
-            <button id="player_x" onclick="choose_player_x()">Player X</button>
-            <button id="player_o" onclick="choose_player_o()">Player O</button>
+            Click Start to start training the menace
         </section>
 
         <section class="display" id="display">
             Player <span class="display-player playerX">X</span>'s turn
         </section>
         <section class="container">
-            <audio id="audio"></audio>
             <div class="tile"></div>
             <div class="tile"></div>
             <div class="tile"></div>
@@ -37,13 +32,22 @@
             <div class="tile"></div>
             <div class="tile"></div>
         </section>
-        <section class="display announcer hide"></section>
+        <section class="display announcer" id="announcer">&nbsp</section>
         <section class="controls">
-
-            <button id="reset">Reset</button>
+            <button id="train_menace" onclick="train_menace()">Start</button>
+        </section>
+        <section class="display">
+            <span class="wins">Wins</span>
+            <span class="wins">Draws</span>
+            <span class="wins">Lost</span>
+        </section>
+        <section class="display">
+            <span class="count" id="win_count">0</span>
+            <span class="count" id="draw_count">0</span>
+            <span class="count" id="loss_count">0</span>
         </section>
         <section class="controls">
-            <button class="start" id="start" onclick="start_new_game()">Start a new game</button>
+            <button class="start" id="start" onclick="start_new_game()">Play a game</button>
         </section>
     </main>
 </body>
