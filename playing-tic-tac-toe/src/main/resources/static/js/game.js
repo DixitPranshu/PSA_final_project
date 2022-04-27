@@ -1,10 +1,15 @@
 window.addEventListener('DOMContentLoaded', () => {
     document.getElementById("start").addEventListener("click", start_new_game);
+    document.getElementById("player_x").addEventListener("click", choose_player_x);
+    document.getElementById("player_o").addEventListener("click", choose_player_o);
+    document.getElementById("display").style.visibility = "hidden";
     const tiles = Array.from(document.querySelectorAll('.tile'));
     const playerDisplay = document.querySelector('.display-player');
     const resetButton = document.querySelector('#reset');
     const announcer = document.querySelector('.announcer');
+    let level = sessionStorage.getItem("level");
     let board = [];
+    let user_player = '_';
     function reset_board() {
         for(var i=0;i<9;i++){
             board[i]='_';
@@ -67,12 +72,25 @@ window.addEventListener('DOMContentLoaded', () => {
     const announce = (type) => {
         switch(type){
             case PLAYERO_WON:
+                if(user_player == "o"){
+                    play_audio("win");
+                }
+                else{
+                    play_audio("lose");
+                }
                 announcer.innerHTML = 'Player <span class="playerO">O</span> Won';
                 break;
             case PLAYERX_WON:
+                if(user_player == "o"){
+                    play_audio("lose");
+                }
+                else{
+                    play_audio("win");
+                }
                 announcer.innerHTML = 'Player <span class="playerX">X</span> Won';
                 break;
             case TIE:
+                play_audio("draw");
                 announcer.innerText = 'Tie';
         }
         announcer.classList.remove('hide');
@@ -97,6 +115,16 @@ window.addEventListener('DOMContentLoaded', () => {
         playerDisplay.classList.add(`player${currentPlayer}`);
     }
 
+    function choose_player_o(){
+        document.getElementById("display").style.visibility = "visible";
+        get_move();
+        user_player = "o";
+    }
+
+    function choose_player_x(){
+        document.getElementById("display").style.visibility = "visible";
+        user_player = "x";
+    }
 
     function get_index(orig_board, new_board){
         for(var i=0;i<board.length;i++){
@@ -106,55 +134,96 @@ window.addEventListener('DOMContentLoaded', () => {
         }
         return -1;
     }
+
     function start_new_game(){
         location.href="index.html";
     }
-    const userAction = (tile, index) => {
-        if(isValidAction(tile) && isGameActive) {
-            tile.innerText = currentPlayer;
-            tile.classList.add(`player${currentPlayer}`);
-            updateBoard(index);
-            var level = sessionStorage.getItem("level");
-            var data = JSON.stringify({
-                  "board": board,
-                  "menacePlayerId": level
-                });
-            var xhr = new XMLHttpRequest();
-            xhr.withCredentials = true;
-            xhr.addEventListener("readystatechange", function() {
-              if(this.readyState === 4) {
-                var delayInMilliseconds = 1000;
-                setTimeout(function() {
-                }, delayInMilliseconds);
+
+    function sleep (time) {
+          return new Promise((resolve) => setTimeout(resolve, time));
+    }
+
+    function get_move(){
+        var data = JSON.stringify({
+                          "board": board,
+                          "menacePlayerId": level,
+                          "gameMode": "human"
+                        });
+        var xhr = new XMLHttpRequest();
+        xhr.withCredentials = true;
+        xhr.addEventListener("readystatechange", function() {
+            if(this.readyState === 4) {
                 var json = JSON.parse(xhr.responseText);
                 var new_board = json.board
                 var new_index = get_index(board, new_board);
-                if(new_index!=-1){
-                    tile = tiles[new_index];
-                    tile.innerText = currentPlayer;
-                    tile.classList.add(`player${currentPlayer}`);
-                    updateBoard(new_index);
-                    console.log(board);
-                    handleResultValidation();
-                    changePlayer();
-                }
-              }
-            });
-            xhr.open("POST", "http://localhost:8080/game/playWithMenace");
-            xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
-            xhr.setRequestHeader("Content-Type", "application/json");
-            xhr.send(data);
+                sleep(500).then(() => {
+                    update_board_from_api(new_index);
+                });
+            }
+        });
+        xhr.open("POST", "http://localhost:8080/game/playWithMenace");
+        xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
+        xhr.setRequestHeader("Content-Type", "application/json");
+        xhr.send(data);
+    }
 
-            handleResultValidation();
-            changePlayer();
+    function update_board_from_api(new_index){
+        tile = tiles[new_index];
+        tile.innerText = currentPlayer;
+        play_audio("move");
+        tile.classList.add(`player${currentPlayer}`);
+        updateBoard(new_index);
+        console.log(board);
+        handleResultValidation();
+        changePlayer();
+    }
+
+    function play_audio(type){
+        var audio_path = "";
+        if(type=="move"){
+            audio_path = "audios/move.wav";
         }
+        else if(type=="win"){
+            audio_path = "audios/win.mp3";
+        }
+        else if(type=="lose"){
+            audio_path = "audios/lose.mp3";
+        }
+        else{
+            audio_path = "audios/draw.mp3";
+        }
+        var audio = document.getElementById("audio");
+        audio.src = audio_path;
+        audio.play();
+    }
+    const userAction = (tile, index) => {
+
+        if(isValidAction(tile) && isGameActive ) {
+            if(user_player!='_'){
+                tile.innerText = currentPlayer;
+                play_audio("move");
+                tile.classList.add(`player${currentPlayer}`);
+                updateBoard(index);
+                handleResultValidation();
+                changePlayer();
+                get_move();
+            }
+            else{
+                alert("Choose a player first");
+            }
+        }
+        else{
+            alert("Invalid Move");
+        }
+
     }
     
     const resetBoard = () => {
+        user_player = "_";
         reset_board();
         isGameActive = true;
         announcer.classList.add('hide');
-
+        announcer.textContent = '&nbsp';
         if (currentPlayer === 'O') {
             changePlayer();
         }
@@ -164,6 +233,7 @@ window.addEventListener('DOMContentLoaded', () => {
             tile.classList.remove('playerX');
             tile.classList.remove('playerO');
         });
+        document.getElementById("display").style.visibility = "hidden";
     }
 
     tiles.forEach( (tile, index) => {

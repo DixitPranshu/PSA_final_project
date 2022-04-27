@@ -1,10 +1,11 @@
 window.addEventListener('DOMContentLoaded', () => {
-    document.getElementById("start").addEventListener("click", start_game);
-    document.getElementById("start_new_game").addEventListener("click", start_new_game);
+    document.getElementById("train_menace").addEventListener("click", train_menace);
+    document.getElementById("start").addEventListener("click", start_new_game);
     const tiles = Array.from(document.querySelectorAll('.tile'));
     const playerDisplay = document.querySelector('.display-player');
     const resetButton = document.querySelector('#reset');
-    const announcer = document.querySelector('.announcer');
+//    const announcer = document.querySelector('.announcer');
+    const announcer = document.getElementById('announcer');
     let board = [];
     function reset_board() {
         for(var i=0;i<9;i++){
@@ -15,7 +16,9 @@ window.addEventListener('DOMContentLoaded', () => {
     reset_board();
     let currentPlayer = 'X';
     let isGameActive = true;
-
+    let player_x_wins = 0;
+    let player_x_draws = 0;
+    let player_o_wins = 0;
     const PLAYERX_WON = 'MENACE_PLAYERX_WON';
     const PLAYERO_WON = 'MENACE_PLAYERO_WON';
     const TIE = 'TIE';
@@ -69,14 +72,18 @@ window.addEventListener('DOMContentLoaded', () => {
         switch(type){
             case PLAYERO_WON:
                 announcer.innerHTML = 'Menace Player <span class="playerO">O</span> Won';
+                player_o_wins+=1;
                 break;
             case PLAYERX_WON:
                 announcer.innerHTML = 'Menace Player <span class="playerX">X</span> Won';
+                player_x_wins+=1;
                 break;
             case TIE:
+                player_x_draws+=1;
                 announcer.innerText = 'Tie';
         }
-        announcer.classList.remove('hide');
+//        announcer.classList.remove('hide');
+        announcer.style.visibility = "visible";
     };
 
     const isValidAction = (tile) => {
@@ -113,12 +120,74 @@ window.addEventListener('DOMContentLoaded', () => {
     }
 
     function start_new_game(){
+        if(confirm("Do you wish to play a game instead?") == true){
             location.href="index.html";
         }
+    }
+    let game_num = 0
+    async function train_menace(){
+        document.getElementById("win_count").textContent = player_x_wins;
+        document.getElementById("draw_count").textContent = player_x_draws;
+        document.getElementById("loss_count").textContent = player_o_wins;
+        if(game_num<10000){
+            if(roundWon || !board.includes(empty_char)){
+                    game_num++;
 
-    function start_game(){
+                    resetBoard();
 
-    if(board.includes(empty_char) && roundWon!=true){
+
+
+            }
+            var data = JSON.stringify({
+                      "gameNum": game_num,
+                      });
+            var xhr = new XMLHttpRequest();
+            xhr.withCredentials = true;
+            xhr.onreadystatechange = async function() {
+                if(this.readyState === 4) {
+                    console.log(xhr.responseText);
+                    var moves = JSON.parse("[" + xhr.responseText + "]")[0];
+                    for(j=0;j<moves.length;j++){
+
+                        var new_board = moves[j];
+                        var new_index = get_index(board, new_board);
+                        if(new_index!=-1){
+                                tile = tiles[new_index];
+//                                sleep(2000).then(() => {
+//                                    tile.innerText = currentPlayer;
+//                                });
+                                tile.innerText = currentPlayer;
+                                tile.classList.add(`player${currentPlayer}`);
+                                updateBoard(new_index);
+                                console.log(board);
+                                handleResultValidation();
+                                changePlayer();
+                                await sleep(50);
+                        }
+                    }
+//                    sleep(500).then(() => {
+                                   train_menace();
+//                    });
+
+                }
+            }
+            xhr.open("POST", "http://localhost:8080/game/trainMenace");
+            xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
+            xhr.setRequestHeader("Content-Type", "application/json");
+            xhr.send(data);
+
+
+    }
+}
+    /*function train_menace(){
+        let i =0;
+        if(i<10000){
+            if(roundWon || !board.includes(empty_char)){
+            sleep(100).then(() => {
+                i++;
+                resetBoard();
+            });
+            }
             var data = JSON.stringify({
                       "board": board,
                       "menacePlayerId": "hard",
@@ -127,7 +196,8 @@ window.addEventListener('DOMContentLoaded', () => {
             xhr.withCredentials = true;
             xhr.onreadystatechange = function() {
               if(this.readyState === 4) {
-                sleep(500).then(() => {
+
+                sleep(100).then(() => {
                     console.log(xhr.responseText);
                     var json = JSON.parse(xhr.responseText);
                     var new_board = json.board
@@ -140,23 +210,22 @@ window.addEventListener('DOMContentLoaded', () => {
                         console.log(board);
                         handleResultValidation();
                         changePlayer();
-                        start_game();
+                        train_menace();
                     }
                 });
-
               }
             };
             xhr.open("POST", "http://localhost:8080/game/playWithMenace");
             xhr.setRequestHeader("Access-Control-Allow-Origin", "*");
             xhr.setRequestHeader("Content-Type", "application/json");
             xhr.send(data);
-
             handleResultValidation();
-//            changePlayer();
+        //            changePlayer();
 
 
-        }
     }
+
+    }*/
 
     const userAction = (tile, index) => {
         if(isValidAction(tile) && isGameActive) {
@@ -171,7 +240,10 @@ window.addEventListener('DOMContentLoaded', () => {
     const resetBoard = () => {
         reset_board();
         isGameActive = true;
-        announcer.classList.add('hide');
+//        announcer.textContent = '&nbsp';
+//        announcer.classList.add('hide');
+//        announcer.textContent = '&nbsp';
+        announcer.style.visibility = "hidden";
         roundWon = false;
         if (currentPlayer === 'O') {
             changePlayer();
@@ -188,5 +260,4 @@ window.addEventListener('DOMContentLoaded', () => {
         tile.addEventListener('click', () => userAction(tile, index));
     });
 
-    resetButton.addEventListener('click', resetBoard);
 });
