@@ -1,6 +1,6 @@
 package com.finalproject.playingtictactoe.service;
 
-import com.finalproject.playingtictactoe.Storage.TrainedMenacePlayerStorage;
+import com.finalproject.playingtictactoe.storage.TrainedMenacePlayerStorage;
 import com.finalproject.playingtictactoe.model.Board;
 import com.finalproject.playingtictactoe.model.Game;
 import com.finalproject.playingtictactoe.model.GamePlay;

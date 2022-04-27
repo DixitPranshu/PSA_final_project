@@ -1,7 +1,7 @@
 package com.finalproject.playingtictactoe.controller;
 
 import com.finalproject.playingtictactoe.PlayingTicTacToeApplication;
-import com.finalproject.playingtictactoe.Storage.TrainedMenacePlayerStorage;
+import com.finalproject.playingtictactoe.storage.TrainedMenacePlayerStorage;
 import com.finalproject.playingtictactoe.model.*;
 import com.finalproject.playingtictactoe.service.GameService;
 import com.finalproject.playingtictactoe.service.TrainMenace;
