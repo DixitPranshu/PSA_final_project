@@ -50,4 +50,12 @@ public class Board {
     public void playMove(int position, String marker){
         this.boardArray[position] = marker;
     }
+
+    public String getBoardString(){
+        String board_str="";
+        for (int i =0;i<boardArray.length; i++) {
+            board_str+=boardArray[i];
+        }
+        return board_str;
+    }
 }

@@ -1,26 +1,24 @@
 package com.finalproject.playingtictactoe.service;
 
 import com.finalproject.playingtictactoe.Storage.TrainedMenacePlayerStorage;
+import com.finalproject.playingtictactoe.model.Board;
+import com.finalproject.playingtictactoe.model.Game;
 import com.finalproject.playingtictactoe.model.GamePlay;
 import com.finalproject.playingtictactoe.model.MenacePlayer;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.UUID;
 @Service
 @AllArgsConstructor
 public class GameService {
 
+    public void save_matches_played(ArrayList<ArrayList<String>> matches_played){
+        TrainedMenacePlayerStorage.getInstance().setMatches_played(matches_played);
+    }
 
-//    public Game createGame(MenacePlayer menace_player) {
-//        Game game = new Game();
-//        Board board = new Board();
-//        game.setBoard(board);
-//        game.setGameId(UUID.randomUUID().toString());
-//        game.setMenacePlayer(menace_player);
-////        game.setStatus(NEW);
-////        GameStorage.getInstance().setGame(game);
-//        return game;
-//    }
+
     public String save_menace(String level, MenacePlayer menacePlayer){
         return TrainedMenacePlayerStorage.getInstance().setMenacePlayers(level, menacePlayer);
     }
@@ -35,6 +33,4 @@ public class GameService {
         gamePlay.setMenacePlayerId(id);
         return gamePlay;
     }
-
-    
 }

@@ -7,4 +7,5 @@ public class GamePlay {
 
     private String[] board;
     private String menacePlayerId;
+    private String gameMode;
 }

@@ -1,9 +1,12 @@
 package com.finalproject.playingtictactoe.model;
 
+import com.finalproject.playingtictactoe.PlayingTicTacToeApplication;
+import org.slf4j.Logger;
+
 import java.util.*;
 
 public class MenacePlayer {
-
+    Logger logger = PlayingTicTacToeApplication.logger;
     Hashtable<String, ArrayList<Integer>> match_boxes;
     Hashtable<String, ArrayList<Integer>> states_lost;
     int num_win;
@@ -34,39 +37,81 @@ public class MenacePlayer {
         this.moves_played = new Hashtable<>();
 //        this.match_boxes = new Hashtable<>();
     }
+    public float[] get_move_with_max_prob(ArrayList<Integer> new_beads_repeated){
 
-    public int get_move(Board board){
-        String[] board_array = board.getBoard();
-        ArrayList<Integer> new_beads = new ArrayList<Integer>();
-        ArrayList<Integer> new_beads_repeated = new ArrayList<Integer>();
-        int rand_bead = -1;
-        String board_str="";
+        Map<Integer, Integer> freq_map = get_frequency_count(new_beads_repeated);
+        Set<Integer> bead_keys = freq_map.keySet();
 
-        for (int i =0;i<board_array.length; i++) {
-            board_str+=board_array[i];
+        float move_with_max_prob[] = new float[2];
+        float total_beads = new_beads_repeated.size();
+        for (Integer key : bead_keys) {
+            float bead_count = freq_map.get(key);
+            float prob = bead_count/total_beads;
+            if(prob>move_with_max_prob[1]){
+                move_with_max_prob[0] = key;
+                move_with_max_prob[1] = prob;
+            }
         }
-        // System.out.println(this+"  "+"board_str before making a move: "+board_str);
+        return move_with_max_prob;
+    }
+
+     public ArrayList<Integer> addNewBeads(String[] board_array){
+         ArrayList<Integer> new_beads = new ArrayList<Integer>();
+         ArrayList<Integer> new_beads_repeated = new ArrayList<Integer>();
+         for (int i =0;i<board_array.length; i++) {
+             if (board_array[i].equals(empty_char)) {
+                 new_beads.add(i);
+             }
+         }
+
+         int n_copies = (new_beads.size()+2)/2;
+         for(int i =0;i<new_beads.size();i++){
+             new_beads_repeated.addAll(Collections.nCopies(n_copies, new_beads.get(i)));
+         }
+         return new_beads_repeated;
+     }
+
+    public int get_move(Board board, boolean train){
+        String[] board_array = board.getBoard();
+        ArrayList<Integer> new_beads_repeated = new ArrayList<Integer>();
+
+        int rand_bead = -1;
+        String board_str=board.getBoardString();
+
         if(!this.match_boxes.containsKey(board_str)){
-            for (int i =0;i<board_array.length; i++) {
-                if (board_array[i].equals(empty_char)) {
-                    new_beads.add(i);
-                }
-            }
-            int n_copies = (new_beads.size()+2)/2;
-            for(int i =0;i<new_beads.size();i++){
-                new_beads_repeated.addAll(Collections.nCopies(n_copies, new_beads.get(i)));
-            }
+            new_beads_repeated = addNewBeads(board_array);
             this.match_boxes.put(board_str, new_beads_repeated);
         }
         new_beads_repeated = this.match_boxes.get(board_str);
         Random rand = new Random();
         if(new_beads_repeated.size()>0){
-            rand_bead = new_beads_repeated.get(rand.nextInt(new_beads_repeated.size()));
-            this.moves_played.put(board_str, rand_bead);
+
+            if(!train){
+
+                float[] move_with_max_prob = get_move_with_max_prob(new_beads_repeated);
+                logger.info("Move probability: {}",move_with_max_prob[1]);
+                rand_bead = (int) move_with_max_prob[0];
+                this.moves_played.put(board_str, (int) move_with_max_prob[0]);
+
+//                while(get_move_with_max_prob(rand_bead, new_beads, new_beads_repeated)<0.9){
+//                    rand_bead = new_beads_repeated.get(rand.nextInt(new_beads_repeated.size()));
+//                }
+            }
+            else{
+                rand_bead = new_beads_repeated.get(rand.nextInt(new_beads_repeated.size()));
+                this.moves_played.put(board_str, rand_bead);
+            }
+
         }
         if(rand_bead==-1){
             // System.out.println("lost: "+this.states_lost.get(board_str));
-            // System.out.println("hi: "+new_beads_repeated);
+//            System.out.println("Match box beads before adding: "+this.match_boxes.get(board_str));
+            new_beads_repeated = addNewBeads(board_array);
+            this.match_boxes.put(board_str,new_beads_repeated);
+//            System.out.println("Match box beads after adding: "+this.match_boxes.get(board_str));
+            rand_bead = new_beads_repeated.get(rand.nextInt(new_beads_repeated.size()));
+            this.moves_played.put(board_str, rand_bead);
+//             System.out.println("hi: "+new_beads_repeated);
         }
         return rand_bead;
     }
@@ -85,7 +130,7 @@ public class MenacePlayer {
              }
         this.num_win+=1;
     }
-    public Map<Integer, Integer> get_frequncy_count(ArrayList<Integer> beads){
+    public Map<Integer, Integer> get_frequency_count(ArrayList<Integer> beads){
 
         Map<Integer, Integer> freq_map = new HashMap<>();
         for(int i=0;i<beads.size();i++){
