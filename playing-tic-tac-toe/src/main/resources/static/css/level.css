@@ -9,7 +9,7 @@
 }
 .background {
     background-color: #12181B;
-    height: 100vh;
+    height: 150vh;
     padding-top: 1px;
 }
 
@@ -47,6 +47,24 @@
   height: 4vw;
   border-radius: 1vw;
 }
+
+
+.button-easy {
+  background-color: #4CAF50;
+  border: none;
+  color: white;
+  text-align: center;
+  text-decoration: none;
+  /*display: inline;*/
+  font-size: 2vw;
+  margin-top: 4vw;
+  margin-left: 40vw;
+  cursor: pointer;
+  width: 20vw;
+  height: 4vw;
+  border-radius: 1vw;
+}
+
 .playerX {
     color: #09C372;
 }

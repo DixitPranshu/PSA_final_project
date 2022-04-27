@@ -1,6 +1,9 @@
 window.addEventListener('DOMContentLoaded', () => {
     document.getElementById("start").addEventListener("click", start_game);
     document.getElementById("start_new_game").addEventListener("click", start_new_game);
+
+
+
     const tiles = Array.from(document.querySelectorAll('.tile'));
     const playerDisplay = document.querySelector('.display-player');
     const resetButton = document.querySelector('#reset');
@@ -117,6 +120,12 @@ window.addEventListener('DOMContentLoaded', () => {
         }
 
     function start_game(){
+    if(currentPlayer == 'X'){
+        level = sessionStorage.getItem("menace-x-level")
+    }
+    else if(currentPlayer == 'O'){
+            level = sessionStorage.getItem("menace-o-level")
+        }
 
     if(board.includes(empty_char) && roundWon!=true){
             var data = JSON.stringify({
@@ -189,4 +198,8 @@ window.addEventListener('DOMContentLoaded', () => {
     });
 
     resetButton.addEventListener('click', resetBoard);
+
+
+
+
 });
