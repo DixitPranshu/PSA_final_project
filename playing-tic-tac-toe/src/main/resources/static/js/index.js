@@ -7,7 +7,7 @@ function human_button_onclick(){
 
 function menace_button_onclick(){
     sessionStorage.setItem("button", "menace-button");
-    location.href="menacegame.html";
+    location.href="menace_x_level.html";
 }
 
 function train_menace_button_onclick(){
