@@ -10,3 +10,7 @@ function menace_button_onclick(){
     location.href="menacegame.html";
 }
 
+function train_menace_button_onclick(){
+    sessionStorage.setItem("button", "train-menace-button");
+    location.href="trainmenace.html";
+}
