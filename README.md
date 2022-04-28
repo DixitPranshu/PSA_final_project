@@ -13,7 +13,7 @@ The application will run on port 8080. You can access the application by opening
 
 ## Demo video
 You can view the following video to have a walkthrough of the application and how to run it. 
-Video link (https://youtu.be/W-NUGpxJ9i4)
+Video link (https://youtu.be/LozkpJE-yGQ)
 
 ## Application Screens
 ![Screenshot (160)](https://user-images.githubusercontent.com/91440478/165657238-6cc6f0c4-4a06-4537-9446-4d729533527e.png)
