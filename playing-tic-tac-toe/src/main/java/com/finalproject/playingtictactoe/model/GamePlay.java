@@ -8,4 +8,5 @@ public class GamePlay {
     private String[] board;
     private String menacePlayerId;
     private String gameMode;
+    private String move_num;
 }

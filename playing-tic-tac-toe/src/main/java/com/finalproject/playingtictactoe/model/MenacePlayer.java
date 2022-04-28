@@ -71,7 +71,15 @@ public class MenacePlayer {
          return new_beads_repeated;
      }
 
-    public int get_move(Board board, boolean train){
+    public float get_move_prob(ArrayList<Integer> new_beads_repeated, int rand_bead){
+        Map<Integer, Integer> freq_map = get_frequency_count(new_beads_repeated);
+        float total_beads = new_beads_repeated.size();
+        float bead_count = freq_map.get(rand_bead);
+        float prob = bead_count/total_beads;
+        return prob;
+    }
+
+    public int get_move(Board board, boolean onlineplay, boolean train){
         String[] board_array = board.getBoard();
         ArrayList<Integer> new_beads_repeated = new ArrayList<Integer>();
 
@@ -86,7 +94,7 @@ public class MenacePlayer {
         Random rand = new Random();
         if(new_beads_repeated.size()>0){
 
-            if(!train){
+            if(onlineplay){
 
                 float[] move_with_max_prob = get_move_with_max_prob(new_beads_repeated);
                 logger.info("Move probability: {}",move_with_max_prob[1]);
@@ -100,6 +108,10 @@ public class MenacePlayer {
             else{
                 rand_bead = new_beads_repeated.get(rand.nextInt(new_beads_repeated.size()));
                 this.moves_played.put(board_str, rand_bead);
+                if(!train){
+                    logger.info("Move probability: {}",get_move_prob(new_beads_repeated, rand_bead));
+                }
+
             }
 
         }
@@ -111,6 +123,9 @@ public class MenacePlayer {
 //            System.out.println("Match box beads after adding: "+this.match_boxes.get(board_str));
             rand_bead = new_beads_repeated.get(rand.nextInt(new_beads_repeated.size()));
             this.moves_played.put(board_str, rand_bead);
+            if(!train){
+                logger.info("Move probability: {}",get_move_prob(new_beads_repeated, rand_bead));
+            }
 //             System.out.println("hi: "+new_beads_repeated);
         }
         return rand_bead;

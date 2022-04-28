@@ -59,7 +59,7 @@ class MenacePlayerTest {
         var menacePlayer = new MenacePlayer(0,0,0);
         board.setBoard(board_array);
         menacePlayer.start_game();
-        assertEquals(1, menacePlayer.get_move(board, false));
+        assertEquals(1, menacePlayer.get_move(board, false, false));
     }
 
     @Test

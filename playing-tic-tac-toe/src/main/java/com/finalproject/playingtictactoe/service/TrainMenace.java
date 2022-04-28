@@ -49,7 +49,7 @@ public class TrainMenace {
         MenacePlayer menacePlayer2 = new MenacePlayer(0,0,0);
 
 
-        for(int i = 0;i<10000;i++){
+        for(int i = 0;i<100000;i++){
             ArrayList<String> moves_played = new ArrayList<>();
             if(i==100){
                 save_menace_level("easy", menacePlayer1, menacePlayer2);
@@ -62,7 +62,7 @@ public class TrainMenace {
             Board board = new Board();
             String win = "LOST";
             while(true){
-                int move = menacePlayer1.get_move(board, true);
+                int move = menacePlayer1.get_move(board, false, true);
                 if(move==-1){
                     menacePlayer1.lose_game();
                     menacePlayer2.win_game();
@@ -80,7 +80,7 @@ public class TrainMenace {
                     menacePlayer2.draw_game();
                     break;
                 }
-                int move2 = menacePlayer2.get_move(board, true);
+                int move2 = menacePlayer2.get_move(board, false, true);
                 if(move2==-1){
                     menacePlayer2.lose_game();
                     menacePlayer1.win_game();

@@ -36,10 +36,10 @@ public class GameController {
     @PostMapping("/playWithMenace")
     public ResponseEntity<GamePlay> gamePlay(@RequestBody GamePlay request){
         Logger logger = PlayingTicTacToeApplication.logger;
-        boolean train = false;
+        boolean onlinePlay = true;
         String gameMode = request.getGameMode();
         if(gameMode.equals("menace")){
-            train = true;
+            onlinePlay = false;
         }
         String menace_id = request.getMenacePlayerId();
         Map<String, MenacePlayer> players = TrainedMenacePlayerStorage.getInstance().getMenacePlayers();
@@ -53,7 +53,7 @@ public class GameController {
         String[] boardArray = request.getBoard();
         Board board = new Board();
         board.setBoard(boardArray);
-        logger.info("Player X Plays: {}",board.getBoardString());
+//        logger.info("Player X Plays: {}",board.getBoardString());
         if(board.isWinning()){
             menacePlayer.lose_game();
             menacePlayer.setGame_active(false);
@@ -68,10 +68,10 @@ public class GameController {
             return ResponseEntity.ok(gameService.play_move(board.getBoard(), menace_id));
         }
 
-        int move = menacePlayer.get_move(board, train);
+        int move = menacePlayer.get_move(board, onlinePlay, false);
 
         board.playMove(move,"O");
-        logger.info("Player O Plays: {}",board.getBoardString());
+        logger.info("Player O Plays: {} move {}",board.getBoardString(), request.getMove_num());
         if(board.isWinning()){
             menacePlayer.win_game();
             menacePlayer.setGame_active(false);
