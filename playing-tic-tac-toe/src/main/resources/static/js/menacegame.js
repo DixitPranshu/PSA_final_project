@@ -24,12 +24,6 @@ window.addEventListener('DOMContentLoaded', () => {
     const TIE = 'TIE';
     var empty_char = '_';
 
-    /*
-        Indexes within the board
-        [0] [1] [2]
-        [3] [4] [5]
-        [6] [7] [8]
-    */
 
     const winningConditions = [
         [0, 1, 2],
@@ -101,7 +95,6 @@ window.addEventListener('DOMContentLoaded', () => {
         playerDisplay.classList.add(`player${currentPlayer}`);
     }
 
-
     function get_index(orig_board, new_board){
         for(var i=0;i<board.length;i++){
             if(orig_board[i]!=new_board[i]){
@@ -112,19 +105,21 @@ window.addEventListener('DOMContentLoaded', () => {
     }
 
     function sleep (time) {
-      return new Promise((resolve) => setTimeout(resolve, time));
+        return new Promise((resolve) => setTimeout(resolve, time));
     }
 
     function start_new_game(){
-            location.href="index.html";
-        }
+        location.href="index.html";
+    }
 
     function start_game(){
-    if(currentPlayer == 'X'){
-        level = sessionStorage.getItem("menace-x-level")
-    }
-    else if(currentPlayer == 'O'){
-            level = sessionStorage.getItem("menace-o-level")
+
+        if(currentPlayer == 'X'){
+            level = sessionStorage.getItem("menace-x-level")
+        }
+
+        else if(currentPlayer == 'O'){
+                level = sessionStorage.getItem("menace-o-level")
         }
 
     if(board.includes(empty_char) && roundWon!=true){
@@ -161,11 +156,9 @@ window.addEventListener('DOMContentLoaded', () => {
             xhr.send(data);
 
             handleResultValidation();
-//            changePlayer();
-
-
         }
     }
+
 
     const userAction = (tile, index) => {
         if(isValidAction(tile) && isGameActive) {
