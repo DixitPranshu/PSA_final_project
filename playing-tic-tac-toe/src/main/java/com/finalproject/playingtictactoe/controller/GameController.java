@@ -71,7 +71,7 @@ public class GameController {
         int move = menacePlayer.get_move(board, onlinePlay, false);
 
         board.playMove(move,"O");
-        logger.info("Player O Plays: {} move {}",board.getBoardString(), request.getMove_num());
+        logger.info("Player O Plays: {}",board.getBoardString());
         if(board.isWinning()){
             menacePlayer.win_game();
             menacePlayer.setGame_active(false);
